@@ -5,6 +5,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGener
 from qdrant_client.http.models import SearchParams
 from qdrant_client import QdrantClient
 from langchain.memory import ConversationBufferMemory
+from langchain.schema import HumanMessage, AIMessage
 import os
 
 # Initialize memory for conversation history
@@ -30,9 +31,10 @@ def search_related_text(query_embedding, unique_id, collection_name, top_k=3):
 def generate_response(llm, related_texts, user_query):
     conversation_history = memory.chat_memory.messages
     formatted_history = "\n".join([
-        f"User: {message.content}" if message.type == "human" else f"Assistant: {message.content}"
+        f"User: {message.content}" if isinstance(message, HumanMessage) else f"Assistant: {message.content}"
         for message in conversation_history
     ])
+    
     st.success("Formated Text\n")
     if related_texts:
         formatted_text = "\n".join(related_texts)
@@ -42,26 +44,26 @@ def generate_response(llm, related_texts, user_query):
         Imagine you're speaking directly to the user, just like how a colleague from the company would interact with them. 
         If there’s no answer, politely let the user know.
         
-        Relevant Information:
+        Here’s the relevant information that you should keep in mind:
         {formatted_text}
 
-        Conversation History:
+        Here's the conversation history so far:
         {formatted_history}
 
-        User Query:
+        Now, answer the user's question in a way that makes them feel like they're talking to a real person from the company. Feel free to offer additional insights or ask follow-up questions if needed. The user's query is:
         {user_query}
         """
     else:
         prompt = f"""
-        You are an interactive assistant who answers questions in a friendly and conversational tone. 
+        You are an interactive assistant who answers questions in a friendly and conversational tone, just like a real person from the company. 
         If there’s no relevant information to answer the user’s question, kindly inform them that you don’t have the necessary details and encourage them to ask something else.
 
         Unfortunately, we don't have relevant information available for your query at the moment. Please feel free to ask something else!
 
-        Conversation History:
+        Here's the conversation history so far:
         {formatted_history}
 
-        User Query:
+        Now, answer the user's question in a way that makes them feel like they're talking to a real person from the company. Feel free to offer additional insights or ask follow-up questions if needed. The user's query is:
         {user_query}
         """
 
@@ -92,7 +94,7 @@ def list_unique_ids_in_collection(qdrant_client, collection_name, limit=100):
 def pipeline(api_key, qdrant_client, collection_name, user_query, unique_id, top_k=2):
     query_embeddings = query_embedding(user_query, api_key)
     related_texts = search_related_text(query_embeddings, unique_id, collection_name, top_k=top_k)
-
+    st.write(related_texts)
     llm = ChatGoogleGenerativeAI(
         model="gemini-1.5-pro",
         temperature=0.6,
