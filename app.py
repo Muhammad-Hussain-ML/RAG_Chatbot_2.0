@@ -34,7 +34,9 @@ def search_related_text(query_embedding, unique_id, collection_name, top_k=3):
 
 def generate_response(llm, related_texts, user_query):
     memory = st.session_state.chat_history  # Use session memory
-    conversation_history = memory.chat_memory.messages
+    conversation_history = st.session_state.chat_history.chat_memory.messages
+
+    # conversation_history = memory.chat_memory.messages
     formatted_history = "\n".join([
         f"User: {message.content}" if isinstance(message, HumanMessage) else f"Assistant: {message.content}"
         for message in conversation_history
