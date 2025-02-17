@@ -125,7 +125,7 @@ def query_ai_page():
             search_params=SearchParams(hnsw_ef=128),
             limit=top_k
         )
-       filtered_texts = [
+        filtered_texts = [
         result.payload["text"]
         for result in search_results.points
         if result.payload.get("unique_id") == unique_id
