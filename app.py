@@ -101,7 +101,7 @@ def list_unique_ids_in_collection(qdrant_client, collection_name, limit=100):
 def pipeline(api_key, qdrant_client, collection_name, user_query, unique_id, top_k=2):
     query_embeddings = query_embedding(user_query, api_key)
     related_texts = search_related_text(query_embeddings, unique_id, collection_name, top_k=top_k)
-    st.write(related_texts)
+    # st.write(related_texts)
     llm = ChatGoogleGenerativeAI(
         model="gemini-1.5-pro",
         temperature=0.6,
