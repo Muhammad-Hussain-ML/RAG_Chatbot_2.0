@@ -35,7 +35,7 @@ def generate_response(llm, related_texts, user_query):
         for message in conversation_history
     ])
     
-    st.success("Formated Text\n")
+    st.success(f"{formatted_history}\n")
     if related_texts:
         formatted_text = "\n".join(related_texts)
         prompt = f"""
