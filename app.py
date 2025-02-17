@@ -33,7 +33,7 @@ def generate_response(llm, related_texts, user_query):
         f"User: {message.content}" if message.type == "human" else f"Assistant: {message.content}"
         for message in conversation_history
     ])
-    
+    st.write(formatted_history)
     if related_texts:
         formatted_text = "\n".join(related_texts)
         prompt = f"""
