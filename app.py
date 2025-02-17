@@ -114,13 +114,13 @@ def pipeline(api_key, qdrant_client, collection_name, user_query, unique_id, top
     st.session_state.chat_history.chat_memory.add_user_message(user_query)
     st.session_state.chat_history.chat_memory.add_ai_message(response)
 
-    conversation_history = memory.chat_memory.messages
-    formatted_history = "\n".join([
-        f"User: {message.content}" if isinstance(message, HumanMessage) else f"Assistant: {message.content}"
-        for message in conversation_history
-    ])
+    # conversation_history = memory.chat_memory.messages
+    # formatted_history = "\n".join([
+    #     f"User: {message.content}" if isinstance(message, HumanMessage) else f"Assistant: {message.content}"
+    #     for message in conversation_history
+    # ])
     
-    st.success(f"{formatted_history}\n")
+    # st.success(f"{formatted_history}\n")
 
     return response
 
