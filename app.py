@@ -8,8 +8,12 @@ from langchain.memory import ConversationBufferMemory
 from langchain.schema import HumanMessage, AIMessage
 import os
 
-# Initialize memory for conversation history
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+# Initialize session state for chat history and unique_id tracking
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+if "last_unique_id" not in st.session_state:
+    st.session_state.last_unique_id = None
+
 
 def query_embedding(query, api_key):
     embeddings_model = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004", google_api_key=api_key)
@@ -138,6 +142,11 @@ with st.spinner("Fetching Hospital Names..."):
 user_query = st.text_input("Enter your Query:")
 unique_id = st.selectbox("Select Hospital ID/Name:", options=hospitals)
 
+# here change
+if unique_id != st.session_state.last_unique_id:
+    st.session_state.chat_history = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    st.session_state.last_unique_id = unique_id 
+    
 if st.button("Run Query"):
     if api_key and qdrant_client and collection_name and user_query:
         try:
